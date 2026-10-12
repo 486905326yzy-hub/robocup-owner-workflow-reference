@@ -1,0 +1,35 @@
+asr:
+  publish_topic: /voice/asr_text
+  legacy_publish_topic: /xfyun/iat
+  model_size: $(find offline_voice_bridge)/models/whisper/faster-whisper-small
+  hf_endpoint: https://huggingface.co
+  device: cpu
+  compute_type: int8
+  language: zh
+  sample_rate: 16000
+  chunk_seconds: 4.0
+  overlap_seconds: 0.4
+  min_voice_seconds: 0.6
+  energy_threshold: 300
+  capture_device: default
+  command_mode: false
+
+tts:
+  subscribe_topic: /voice/say
+  legacy_subscribe_topic: /xfyun/tts
+  wav_path: /dev/shm/offline_tts_melo_zh.wav
+  engine: melo
+  language: ZH
+  voice: ZH
+  speed: 1.0
+  device: cpu
+  third_party_path: $(find offline_voice_bridge)/third_party/MeloTTS
+  config_path: $(find offline_voice_bridge)/models/melo/zh/config_no_bert.json
+  ckpt_path: $(find offline_voice_bridge)/models/melo/zh/checkpoint.pth
+  sound_topic: /robotsound
+  sound_action: sound_play
+  volume: 1.0
+  sound_wait_timeout: 10.0
+  blocking_playback: true
+  playback_margin: 0.6
+  wav_keep_count: 8

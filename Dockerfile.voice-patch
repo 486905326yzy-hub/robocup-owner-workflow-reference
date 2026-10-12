@@ -1,0 +1,41 @@
+FROM wpb-owner-search:noetic
+
+# The host's analog speaker is ALSA card 1, device 0.  Keep this override in
+# a tiny derived image so ordinary voice startup does not rely on ALSA's
+# unavailable generic "default" device inside Docker.
+COPY catkin_ws/src/offline_voice_bridge/launch/offline_voice.launch /home/ubuntu20/catkin_ws/src/offline_voice_bridge/launch/offline_voice.launch
+COPY catkin_ws/src/offline_voice_bridge/launch/offline_voice_zh.launch /home/ubuntu20/catkin_ws/src/offline_voice_bridge/launch/offline_voice_zh.launch
+COPY catkin_ws/src/wpb_task1_owner_search/CMakeLists.txt /home/ubuntu20/catkin_ws/src/wpb_task1_owner_search/CMakeLists.txt
+COPY catkin_ws/src/wpb_task1_owner_search/config/task1_owner_search_real.yaml /home/ubuntu20/catkin_ws/src/wpb_task1_owner_search/config/task1_owner_search_real.yaml
+COPY catkin_ws/src/wpb_task1_owner_search/data/owner /home/ubuntu20/catkin_ws/src/wpb_task1_owner_search/data/owner
+COPY catkin_ws/src/wpb_task1_owner_search/launch/task1_owner_search_real.launch /home/ubuntu20/catkin_ws/src/wpb_task1_owner_search/launch/task1_owner_search_real.launch
+COPY catkin_ws/src/wpb_task1_owner_search/launch/task1_owner_search_task_only.launch /home/ubuntu20/catkin_ws/src/wpb_task1_owner_search/launch/task1_owner_search_task_only.launch
+COPY catkin_ws/src/wpb_task1_owner_search/scripts/task1_find_owner_real.py /home/ubuntu20/catkin_ws/src/wpb_task1_owner_search/scripts/task1_find_owner_real.py
+COPY catkin_ws/src/wpb_task1_owner_search/scripts/task1_find_owner_real_py39.py /home/ubuntu20/catkin_ws/src/wpb_task1_owner_search/scripts/task1_find_owner_real_py39.py
+USER root
+RUN chmod +x /home/ubuntu20/catkin_ws/src/wpb_task1_owner_search/scripts/task1_find_owner_real.py \
+             /home/ubuntu20/catkin_ws/src/wpb_task1_owner_search/scripts/task1_find_owner_real_py39.py \
+    && chown ubuntu20:ubuntu20 /home/ubuntu20/catkin_ws/src/wpb_task1_owner_search/CMakeLists.txt \
+       /home/ubuntu20/catkin_ws/src/wpb_task1_owner_search/config/task1_owner_search_real.yaml \
+       /home/ubuntu20/catkin_ws/src/wpb_task1_owner_search/data/owner \
+       /home/ubuntu20/catkin_ws/src/wpb_task1_owner_search/launch/task1_owner_search_real.launch \
+       /home/ubuntu20/catkin_ws/src/wpb_task1_owner_search/launch/task1_owner_search_task_only.launch \
+       /home/ubuntu20/catkin_ws/src/wpb_task1_owner_search/scripts/task1_find_owner_real.py \
+       /home/ubuntu20/catkin_ws/src/wpb_task1_owner_search/scripts/task1_find_owner_real_py39.py
+USER ubuntu20
+RUN source /opt/ros/noetic/setup.bash \
+    && cd /home/ubuntu20/catkin_ws \
+    && catkin_make --pkg wpb_task1_owner_search
+
+# The real task relay runs under Python 3.9 for RTX 50-series CUDA support,
+# so face verification must be installed in that interpreter as well as the
+# ROS 3.8 environment provided by the base image.
+USER root
+RUN python3.9 -m pip install --no-cache-dir \
+      onnxruntime==1.19.2 insightface==0.7.3 \
+    # Matplotlib's pip package exposes mpl_toolkits as a namespace directory.
+    # Ubuntu's Python 3.8 package has a regular mpl_toolkits package, which
+    # otherwise wins during Python 3.9 InsightFace imports. Make the 3.9
+    # directory regular so its own mplot3d implementation takes precedence.
+    && touch /usr/local/lib/python3.9/dist-packages/mpl_toolkits/__init__.py
+USER ubuntu20

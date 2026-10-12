@@ -1,0 +1,97 @@
+<launch>
+  <!-- GPU YOLO11-Pose variant; Qwen variant remains owner_voice_reid_optimized.launch. -->
+  <arg name="action_backend" default="yolo_pose" />
+  <arg name="action_pose_model_path" default="/home/ubuntu20/catkin_ws/src/wpr_task1_owner_search/models/pose/yolo11n-pose.pt" />
+  <arg name="action_pose_device" default="cuda:0" />
+  <arg name="action_capture_duration" default="7.0" />
+  <arg name="action_capture_frame_count" default="18" />
+  <arg name="start_camera" default="true" />
+  <arg name="start_yolo" default="true" />
+  <arg name="start_voice" default="true" />
+  <arg name="start_asr" default="true" />
+  <arg name="start_tts" default="true" />
+  <arg name="start_sound_play" default="true" />
+  <arg name="show_yolo_window" default="true" />
+  <arg name="start_navigation" default="true" />
+  <arg name="start_rviz" default="true" />
+  <arg name="rvizconfig" default="$(find wpb_home_tutorials)/rviz/nav.rviz" />
+  <arg name="map" default="$(find wpb_home_tutorials)/maps/map.yaml" />
+  <arg name="serial_port" default="/dev/ftdi" />
+  <arg name="rplidar_port" default="/dev/rplidar" />
+  <arg name="waypoint_file" default="/home/ubuntu20/waypoints.xml" />
+  <arg name="navigate_enabled" default="true" />
+  <!-- Match the latest team strategy: do not bypass move_base with direct motion
+       when a safe global plan cannot be found. The two-stage, lidar-guarded
+       approach remains enabled through the normal navigation controller. -->
+  <arg name="approach_direct_fallback_enabled" default="false" />
+  <!-- Complete the full room route after a recognised action. -->
+  <arg name="patrol_enabled" default="true" />
+  <arg name="patrol_waypoint_names" default="living_room,kitchen,bedroom,canteen" />
+  <arg name="stop_patrol_on_owner_found" default="false" />
+  <arg name="legacy_action_response_enabled" default="true" />
+  <!-- Qwen 0.8B is reserved for the sitting/lying electrical-switch dialogue. -->
+  <arg name="electrical_switch_ollama_enabled" default="true" />
+  <arg name="electrical_switch_ollama_model" default="qwen3.5:0.8b" />
+  <arg name="electrical_switch_ollama_autoselect_model" default="false" />
+  <arg name="electrical_switch_ollama_num_gpu" default="999" />
+  <arg name="electrical_switch_ollama_timeout" default="35.0" />
+  <arg name="electrical_switch_ollama_keep_alive" default="5m" />
+  <arg name="electrical_switch_ollama_warmup_enabled" default="true" />
+  <arg name="waving_help_dialogue_enabled" default="true" />
+  <arg name="waving_help_listen_seconds" default="8.0" />
+  <arg name="waving_help_echo_guard_seconds" default="0.8" />
+  <arg name="waving_help_repeat_prefix" default="我理解您的需求是：" />
+  <arg name="waving_help_no_input_text" default="抱歉，我没有听清您的需求。" />
+  <arg name="waving_help_max_repeat_chars" default="80" />
+  <arg name="reuse_existing_profile" default="false" />
+  <arg name="profile_dir" default="$(find wpb_task1_owner_search)/data/reid_owner_voice" />
+  <arg name="action_llm_frame_count" default="9" />
+
+  <include file="$(find wpb_task1_owner_search)/launch/owner_voice_reid_test.launch">
+    <arg name="task_node_type" value="owner_voice_reid_optimized.py" />
+    <arg name="task_node_name" value="owner_voice_reid_optimized" />
+    <arg name="start_camera" value="$(arg start_camera)" />
+    <arg name="start_yolo" value="$(arg start_yolo)" />
+    <arg name="start_voice" value="$(arg start_voice)" />
+    <arg name="start_asr" value="$(arg start_asr)" />
+    <arg name="start_tts" value="$(arg start_tts)" />
+    <arg name="start_sound_play" value="$(arg start_sound_play)" />
+    <arg name="show_yolo_window" value="$(arg show_yolo_window)" />
+    <arg name="start_navigation" value="$(arg start_navigation)" />
+    <arg name="start_rviz" value="$(arg start_rviz)" />
+    <arg name="rvizconfig" value="$(arg rvizconfig)" />
+    <arg name="map" value="$(arg map)" />
+    <arg name="serial_port" value="$(arg serial_port)" />
+    <arg name="rplidar_port" value="$(arg rplidar_port)" />
+    <arg name="waypoint_file" value="$(arg waypoint_file)" />
+    <arg name="waypoint_name" value="living_room" />
+    <arg name="navigate_enabled" value="$(arg navigate_enabled)" />
+    <arg name="approach_direct_fallback_enabled" value="$(arg approach_direct_fallback_enabled)" />
+    <arg name="patrol_enabled" value="$(arg patrol_enabled)" />
+    <arg name="patrol_waypoint_names" value="$(arg patrol_waypoint_names)" />
+    <arg name="stop_patrol_on_owner_found" value="$(arg stop_patrol_on_owner_found)" />
+    <arg name="legacy_action_response_enabled" value="$(arg legacy_action_response_enabled)" />
+    <arg name="electrical_switch_ollama_enabled" value="$(arg electrical_switch_ollama_enabled)" />
+    <arg name="electrical_switch_ollama_model" value="$(arg electrical_switch_ollama_model)" />
+    <arg name="electrical_switch_ollama_autoselect_model" value="$(arg electrical_switch_ollama_autoselect_model)" />
+    <arg name="electrical_switch_ollama_num_gpu" value="$(arg electrical_switch_ollama_num_gpu)" />
+    <arg name="electrical_switch_ollama_timeout" value="$(arg electrical_switch_ollama_timeout)" />
+    <arg name="electrical_switch_ollama_keep_alive" value="$(arg electrical_switch_ollama_keep_alive)" />
+    <arg name="electrical_switch_ollama_warmup_enabled" value="$(arg electrical_switch_ollama_warmup_enabled)" />
+    <arg name="waving_help_dialogue_enabled" value="$(arg waving_help_dialogue_enabled)" />
+    <arg name="waving_help_listen_seconds" value="$(arg waving_help_listen_seconds)" />
+    <arg name="waving_help_echo_guard_seconds" value="$(arg waving_help_echo_guard_seconds)" />
+    <arg name="waving_help_repeat_prefix" value="$(arg waving_help_repeat_prefix)" />
+    <arg name="waving_help_no_input_text" value="$(arg waving_help_no_input_text)" />
+    <arg name="waving_help_max_repeat_chars" value="$(arg waving_help_max_repeat_chars)" />
+    <arg name="reuse_existing_profile" value="$(arg reuse_existing_profile)" />
+    <arg name="profile_dir" value="$(arg profile_dir)" />
+    <arg name="action_capture_duration" value="$(arg action_capture_duration)" />
+    <arg name="action_capture_frame_count" value="$(arg action_capture_frame_count)" />
+    <arg name="action_llm_frame_count" value="$(arg action_llm_frame_count)" />
+    <arg name="action_backend" value="$(arg action_backend)" />
+    <arg name="action_node_name" value="owner_action_yolo_pose" />
+    <arg name="action_pose_model_path" value="$(arg action_pose_model_path)" />
+    <arg name="action_pose_device" value="$(arg action_pose_device)" />
+  </include>
+</launch>

@@ -1,0 +1,28 @@
+# Independent owner-enrollment workflow. This launch never starts base or navigation.
+image_topic: /kinect2/qhd/image_color_rect
+say_topic: /voice/say
+asr_topic: /voice/asr_text
+owner_store_dir: /home/ubuntu20/catkin_ws/src/wpb_task1_owner_search/data/owners
+session_dir: /home/ubuntu20/catkin_ws/src/wpb_task1_owner_search/data/enrollment_sessions
+max_owners: 3
+capture_timeout: 20.0
+capture_settle_seconds: 2.0
+capture_angles: ["正视摄像头", "向左转约三十度", "向右转约三十度", "向左转约六十度", "向右转约六十度"]
+min_face_pixels: 72
+min_face_det_score: 0.38
+min_face_sharpness: 28.0
+min_owner_face_consistency: 0.42
+duplicate_similarity: 0.55
+name_confirmation_attempts: 2
+asr_wait_seconds: 15.0
+asr_post_tts_silence_seconds: 4.5
+qwen_url: http://127.0.0.1:11434/api/chat
+qwen_model: qwen3.5:0.8b
+qwen_timeout_seconds: 12.0
+qwen_warmup_timeout_seconds: 60.0
+qwen_require_gpu: true
+face_model_root: /home/ubuntu20/.insightface
+face_model_name: buffalo_sc
+face_ctx_id: -1
+face_det_size: 480
+face_det_thresh: 0.35

@@ -1,0 +1,43 @@
+asr:
+  publish_topic: /voice/asr_text
+  legacy_publish_topic: /xfyun/iat
+  model_size: $(find offline_voice_bridge)/models/whisper/faster-whisper-small
+  hf_endpoint: https://huggingface.co
+  device: cpu
+  compute_type: int8
+  language: zh
+  sample_rate: 16000
+  chunk_seconds: 4.0
+  overlap_seconds: 0.4
+  min_voice_seconds: 0.6
+  energy_threshold: 300
+  capture_device: default
+  command_mode: false
+
+tts:
+  subscribe_topic: /voice/say
+  legacy_subscribe_topic: /xfyun/tts
+  wav_path: /dev/shm/offline_tts_zh.wav
+  engine: auto
+  piper_executable: $(find offline_voice_bridge)/tools/piper/piper
+  model_path: $(find offline_voice_bridge)/models/piper/zh_CN-huayan-medium.onnx
+  config_path: $(find offline_voice_bridge)/models/piper/zh_CN-huayan-medium.onnx.json
+  flite_executable: flite
+  flite_voice: slt
+  sound_topic: /robotsound
+  sound_action: sound_play
+  # Direct ALSA has been verified on the robot speaker. sound_play's action
+  # may remain active after GStreamer EOS and create false playback timeouts.
+  playback_backend: aplay
+  audio_device: plughw:CARD=sofhdadsp,DEV=0
+  # The desktop audio service may briefly own the device during launch.
+  audio_retry_seconds: 5.0
+  audio_retry_interval: 0.2
+  sound_wait_timeout: 10.0
+  blocking_playback: true
+  playback_margin: 0.6
+  wav_keep_count: 8
+  volume: 1.0
+  length_scale: 1.0
+  noise_scale: 0.667
+  noise_w: 0.8

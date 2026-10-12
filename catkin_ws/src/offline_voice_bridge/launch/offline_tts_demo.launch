@@ -1,0 +1,9 @@
+<launch>
+  <arg name="config" default="$(find offline_voice_bridge)/config/offline_voice.yaml" />
+  <arg name="text" default="Hello. Offline voice is now taking over robot speech." />
+
+  <rosparam command="load" file="$(arg config)" subst_value="true" />
+  <node name="soundplay_node" pkg="sound_play" type="soundplay_node.py" output="screen" />
+  <node name="offline_tts_node" pkg="offline_voice_bridge" type="offline_tts_node.py" output="screen" />
+  <node name="offline_voice_say_once" pkg="offline_voice_bridge" type="say_once.py" output="screen" args="$(arg text)" />
+</launch>

@@ -1,0 +1,9 @@
+# Torch and torchvision are supplied by the CUDA-enabled base image.
+git+https://github.com/KaiyangZhou/deep-person-reid.git
+PyYAML>=6.0
+numpy>=1.22
+Pillow>=9.0
+opencv-python-headless>=4.8
+pandas>=2.0
+matplotlib>=3.7
+seaborn>=0.13

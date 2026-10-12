@@ -1,0 +1,19 @@
+<launch>
+  <arg name="image_topic" default="/kinect2/qhd/image_color_rect" />
+  <arg name="pointcloud_topic" default="/kinect2/qhd/points" />
+  <arg name="target_frame" default="base_footprint" />
+  <arg name="model_path" default="$(find yoloworld_perception)/models/yolov8s-world-person.pt" />
+  <arg name="device" default="cuda:0" />
+
+  <include file="$(find yoloworld_perception)/launch/yoloworld_real.launch">
+    <arg name="image_topic" value="$(arg image_topic)" />
+    <arg name="model_path" value="$(arg model_path)" />
+    <arg name="device" value="$(arg device)" />
+  </include>
+
+  <include file="$(find yoloworld_perception)/launch/person_3d_projector.launch">
+    <arg name="detections_topic" value="/perception/person_detections_2d" />
+    <arg name="pointcloud_topic" value="$(arg pointcloud_topic)" />
+    <arg name="target_frame" value="$(arg target_frame)" />
+  </include>
+</launch>

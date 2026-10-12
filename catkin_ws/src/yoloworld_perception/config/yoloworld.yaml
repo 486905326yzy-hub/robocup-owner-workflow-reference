@@ -1,0 +1,11 @@
+model_path: "yolov8s-world-person.pt"
+classes: ["person"]
+device: "cuda:0"
+require_gpu: true
+imgsz: 640
+conf: 0.25
+iou: 0.45
+max_det: 20
+process_every_n: 1
+publish_debug: true
+log_interval: 5.0

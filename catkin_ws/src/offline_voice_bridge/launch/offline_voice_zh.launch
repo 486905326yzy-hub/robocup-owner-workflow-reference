@@ -1,0 +1,15 @@
+<launch>
+  <arg name="config" default="$(find offline_voice_bridge)/config/offline_voice_zh.yaml" />
+  <arg name="start_asr" default="true" />
+  <arg name="start_tts" default="true" />
+  <arg name="start_sound_play" default="true" />
+  <arg name="sound_device" default="plughw:CARD=sofhdadsp,DEV=0" />
+
+  <include file="$(find offline_voice_bridge)/launch/offline_voice.launch">
+    <arg name="config" value="$(arg config)" />
+    <arg name="start_asr" value="$(arg start_asr)" />
+    <arg name="start_tts" value="$(arg start_tts)" />
+    <arg name="start_sound_play" value="$(arg start_sound_play)" />
+    <arg name="sound_device" value="$(arg sound_device)" />
+  </include>
+</launch>

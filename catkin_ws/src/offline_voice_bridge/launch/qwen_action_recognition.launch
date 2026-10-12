@@ -1,0 +1,57 @@
+<launch>
+  <arg name="node_name" default="owner_action_qwen" />
+  <!-- Compatibility arguments supplied by the owner-search workflow. -->
+  <arg name="start_camera" default="false" />
+  <arg name="start_voice" default="false" />
+  <arg name="start_sound_play" default="false" />
+  <arg name="points_topic" default="/kinect2/qhd/points" />
+  <arg name="say_topic" default="/voice/say" />
+  <arg name="show_window" default="false" />
+  <arg name="auto_analyze" default="true" />
+  <arg name="auto_repeat_seconds" default="0.0" />
+  <arg name="startup_settle_seconds" default="0.6" />
+  <arg name="pose_enabled" default="false" />
+  <arg name="pose_model_path" default="" />
+  <arg name="pose_device" default="cpu" />
+  <arg name="pose_image_size" default="416" />
+  <arg name="pose_confidence" default="0.25" />
+  <arg name="pose_iou" default="0.45" />
+  <arg name="pose_max_detections" default="4" />
+  <arg name="llm_num_ctx" default="8192" />
+  <arg name="model_warmup_retries" default="3" />
+  <arg name="model_warmup_retry_delay" default="2.0" />
+  <arg name="pointcloud_enabled" default="false" />
+  <arg name="use_owner_roi" default="true" />
+  <arg name="image_topic" default="/kinect2/qhd/image_color_rect" />
+  <arg name="result_topic" default="/owner_voice_reid_test/action_result" />
+  <arg name="llm_url" default="http://127.0.0.1:11434/api/chat" />
+  <arg name="llm_model" default="qwen3.5:0.8b" />
+  <arg name="llm_timeout" default="90.0" />
+  <arg name="llm_keep_alive" default="30m" />
+  <arg name="llm_max_tokens" default="48" />
+  <arg name="capture_delay" default="0.3" />
+  <arg name="capture_duration" default="5.0" />
+  <arg name="capture_frame_count" default="9" />
+  <arg name="llm_frame_count" default="5" />
+  <arg name="jpeg_quality" default="65" />
+  <arg name="image_max_width" default="384" />
+  <arg name="owner_roi" default="" />
+  <arg name="roi_padding" default="0.55" />
+  <node pkg="offline_voice_bridge" type="qwen_action_recognition.py" name="$(arg node_name)" output="screen">
+    <param name="image_topic" value="$(arg image_topic)" />
+    <param name="result_topic" value="$(arg result_topic)" />
+    <param name="llm_url" value="$(arg llm_url)" />
+    <param name="llm_model" value="$(arg llm_model)" />
+    <param name="llm_timeout" value="$(arg llm_timeout)" />
+    <param name="llm_keep_alive" value="$(arg llm_keep_alive)" />
+    <param name="llm_max_tokens" value="$(arg llm_max_tokens)" />
+    <param name="capture_delay" value="$(arg capture_delay)" />
+    <param name="capture_duration" value="$(arg capture_duration)" />
+    <param name="capture_frame_count" value="$(arg capture_frame_count)" />
+    <param name="llm_frame_count" value="$(arg llm_frame_count)" />
+    <param name="jpeg_quality" value="$(arg jpeg_quality)" />
+    <param name="image_max_width" value="$(arg image_max_width)" />
+    <param name="owner_roi" value="$(arg owner_roi)" />
+    <param name="roi_padding" value="$(arg roi_padding)" />
+  </node>
+</launch>

@@ -1,0 +1,20 @@
+model:
+  name: osnet_ain_x1_0
+  weights: models/osnet_ain_x1_0_msmt17.pth
+  device: auto
+  image_height: 256
+  image_width: 128
+  mask_head: true
+  head_mask_ratio: 0.22
+
+reid:
+  similarity_threshold: 0.65
+  margin_threshold: 0.08
+  top_k: 3
+  temporal_window: 8
+  min_registration_images: 20
+
+paths:
+  gallery: outputs/embeddings/gallery.npz
+  matrix_dir: outputs/similarity_matrix
+  visualization_dir: outputs/visualization

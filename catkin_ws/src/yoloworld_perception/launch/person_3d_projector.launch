@@ -1,0 +1,22 @@
+<launch>
+  <arg name="detections_topic" default="/perception/person_detections_2d" />
+  <arg name="pointcloud_topic" default="/kinect2/sd/points" />
+  <arg name="persons_topic" default="/perception/person_detections_3d" />
+  <arg name="target_frame" default="" />
+  <arg name="detection_image_width" default="960" />
+  <arg name="detection_image_height" default="540" />
+
+  <node pkg="yoloworld_perception" type="person_3d_projector.py" name="person_3d_projector" output="screen">
+    <param name="detections_topic" value="$(arg detections_topic)" />
+    <param name="pointcloud_topic" value="$(arg pointcloud_topic)" />
+    <param name="target_frame" value="$(arg target_frame)" />
+    <param name="detection_image_width" value="$(arg detection_image_width)" />
+    <param name="detection_image_height" value="$(arg detection_image_height)" />
+    <param name="max_detection_age" value="0.5" />
+    <param name="sample_grid" value="7" />
+    <param name="min_valid_points" value="3" />
+    <param name="min_depth" value="0.2" />
+    <param name="max_depth" value="8.0" />
+    <remap from="~persons" to="$(arg persons_topic)" />
+  </node>
+</launch>

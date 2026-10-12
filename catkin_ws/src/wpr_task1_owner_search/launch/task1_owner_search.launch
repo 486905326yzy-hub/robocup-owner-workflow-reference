@@ -1,0 +1,63 @@
+<launch>
+  <arg name="start_yolo" default="true" />
+  <arg name="start_voice" default="true" />
+  <arg name="start_task" default="true" />
+  <arg name="show_yolo_viewer" default="true" />
+  <arg name="start_person_3d" default="true" />
+  <arg name="action_sim_hint_enabled" default="false" />
+  <arg name="arm_assist_enabled" default="false" />
+
+  <arg name="image_topic" default="/kinect2/qhd/image_color_rect" />
+  <arg name="detections_topic" default="/perception/person_detections_2d" />
+  <arg name="pointcloud_topic" default="/kinect2/sd/points" />
+  <arg name="persons_3d_topic" default="/perception/person_detections_3d" />
+  <arg name="owner_image_path" default="$(find wpr_task1_owner_search)/data/owner/owner.jpg" />
+  <arg name="waypoint_file" default="/home/$(env USER)/waypoints.xml" />
+  <arg name="device" default="cuda:0" />
+  <arg name="llm_model" default="qwen3.5:9b" />
+  <arg name="llm_url" default="http://127.0.0.1:11434/api/chat" />
+
+  <group if="$(arg start_yolo)">
+    <include file="$(find yoloworld_perception)/launch/yoloworld_sim.launch">
+      <arg name="image_topic" value="$(arg image_topic)" />
+      <arg name="device" value="$(arg device)" />
+      <arg name="conf" value="0.30" />
+      <arg name="imgsz" value="416" />
+      <arg name="max_det" value="5" />
+      <arg name="process_every_n" value="2" />
+      <arg name="show_viewer" value="$(arg show_yolo_viewer)" />
+    </include>
+  </group>
+
+  <group if="$(arg start_person_3d)">
+    <include file="$(find yoloworld_perception)/launch/person_3d_projector.launch">
+      <arg name="detections_topic" value="$(arg detections_topic)" />
+      <arg name="pointcloud_topic" value="$(arg pointcloud_topic)" />
+      <arg name="persons_topic" value="$(arg persons_3d_topic)" />
+      <arg name="target_frame" value="" />
+      <arg name="detection_image_width" value="960" />
+      <arg name="detection_image_height" value="540" />
+    </include>
+  </group>
+
+  <group if="$(arg start_voice)">
+    <include file="$(find offline_voice_bridge)/launch/offline_voice_zh.launch">
+      <arg name="start_asr" value="false" />
+      <arg name="start_tts" value="true" />
+      <arg name="start_sound_play" value="true" />
+    </include>
+  </group>
+
+  <node if="$(arg start_task)" pkg="wpr_task1_owner_search" type="task1_find_owner.py" name="task1_find_owner" output="screen">
+    <rosparam command="load" file="$(find wpr_task1_owner_search)/config/task1_owner_search.yaml" />
+    <param name="image_topic" value="$(arg image_topic)" />
+    <param name="detections_topic" value="$(arg detections_topic)" />
+    <param name="persons_3d_topic" value="$(arg persons_3d_topic)" />
+    <param name="owner_image_path" value="$(arg owner_image_path)" />
+    <param name="waypoint_file" value="$(arg waypoint_file)" />
+    <param name="llm_model" value="$(arg llm_model)" />
+    <param name="llm_url" value="$(arg llm_url)" />
+    <param name="action_sim_hint_enabled" value="$(arg action_sim_hint_enabled)" />
+    <param name="arm_assist_enabled" value="$(arg arm_assist_enabled)" />
+  </node>
+</launch>

@@ -1,0 +1,281 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="default">
+    <light name="sun" type="directional">
+      <cast_shadows>true</cast_shadows>
+      <pose>4.5 4.5 10 0 0 0</pose>
+      <diffuse>0.85 0.85 0.85 1</diffuse>
+      <specular>0.15 0.15 0.15 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.4 0.2 -1</direction>
+    </light>
+
+    <light name="ceiling_center" type="point">
+      <cast_shadows>false</cast_shadows>
+      <pose>4.5 5.0 2.8 0 0 0</pose>
+      <diffuse>0.55 0.55 0.50 1</diffuse>
+      <specular>0.05 0.05 0.05 1</specular>
+      <attenuation>
+        <range>12</range>
+        <constant>0.6</constant>
+        <linear>0.05</linear>
+        <quadratic>0.005</quadratic>
+      </attenuation>
+    </light>
+
+    <gravity>0 0 -9.8</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <atmosphere type="adiabatic"/>
+    <physics name="default_physics" default="0" type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+    <scene>
+      <ambient>0.55 0.55 0.55 1</ambient>
+      <background>0.70 0.70 0.72 1</background>
+      <shadows>true</shadows>
+    </scene>
+
+    <!-- Coordinate layout: origin is the lower-left corner of the 9 m x 9 m field. -->
+    <model name="wood_floor">
+      <static>true</static>
+      <pose>4.5 4.5 -0.01 0 0 0</pose>
+      <link name="floor_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>9.0 9.0 0.02</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>9.0 9.0 0.02</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/WoodFloor</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Four-room house: white orthogonal walls, 0.12 m thick, 2.4 m high. -->
+    <model name="four_room_house">
+      <static>true</static>
+      <pose>0 0 0 0 0 0</pose>
+
+      <!-- Outer walls. The bottom wall has a 0.9 m entrance opening into the living room at x=6.30..7.20. -->
+      <link name="wall_bottom_left">
+        <pose>3.15 1.06 1.2 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>6.30 0.12 2.4</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>6.30 0.12 2.4</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse><specular>0.15 0.15 0.15 1</specular></material>
+        </visual>
+      </link>
+      <link name="wall_bottom_right">
+        <pose>8.10 1.06 1.2 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>1.80 0.12 2.4</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>1.80 0.12 2.4</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse><specular>0.15 0.15 0.15 1</specular></material>
+        </visual>
+      </link>
+      <link name="wall_top">
+        <pose>4.5 8.94 1.2 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>9.0 0.12 2.4</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>9.0 0.12 2.4</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse><specular>0.15 0.15 0.15 1</specular></material>
+        </visual>
+      </link>
+      <!-- Left outer wall with a 0.9 m dining-room exit opening in front of the storage box at y=7.35..8.25. -->
+      <link name="wall_left_lower">
+        <pose>0.06 4.175 1.2 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>0.12 6.35 2.4</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.12 6.35 2.4</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse><specular>0.15 0.15 0.15 1</specular></material>
+        </visual>
+      </link>
+      <link name="wall_left_upper">
+        <pose>0.06 8.625 1.2 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>0.12 0.75 2.4</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.12 0.75 2.4</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse><specular>0.15 0.15 0.15 1</specular></material>
+        </visual>
+      </link>
+      <link name="wall_right">
+        <pose>8.94 5.0 1.2 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>0.12 8.0 2.4</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.12 8.0 2.4</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse><specular>0.15 0.15 0.15 1</specular></material>
+        </visual>
+      </link>
+
+      <!-- Bedroom: lower-left room. It is closed except for a 0.9 m door into the dining room. -->
+      <link name="wall_bedroom_right">
+        <pose>3.9 2.7 1.2 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>0.12 3.4 2.4</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.12 3.4 2.4</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse><specular>0.15 0.15 0.15 1</specular></material>
+        </visual>
+      </link>
+      <link name="wall_bedroom_top_left">
+        <pose>0.775 4.4 1.2 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>1.55 0.12 2.4</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>1.55 0.12 2.4</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse><specular>0.15 0.15 0.15 1</specular></material>
+        </visual>
+      </link>
+      <link name="wall_bedroom_top_right">
+        <pose>3.175 4.4 1.2 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>1.45 0.12 2.4</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>1.45 0.12 2.4</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse><specular>0.15 0.15 0.15 1</specular></material>
+        </visual>
+      </link>
+
+      <!-- Kitchen: upper-right room. It is closed except for a 0.9 m door into the living room. -->
+      <link name="wall_kitchen_left">
+        <pose>5.1 7.3 1.2 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>0.12 3.4 2.4</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.12 3.4 2.4</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse><specular>0.15 0.15 0.15 1</specular></material>
+        </visual>
+      </link>
+      <link name="wall_kitchen_bottom_left">
+        <pose>5.825 5.6 1.2 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>1.45 0.12 2.4</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>1.45 0.12 2.4</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse><specular>0.15 0.15 0.15 1</specular></material>
+        </visual>
+      </link>
+      <link name="wall_kitchen_bottom_right">
+        <pose>8.225 5.6 1.2 0 0 0</pose>
+        <collision name="collision">
+          <geometry><box><size>1.55 0.12 2.4</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>1.55 0.12 2.4</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse><specular>0.15 0.15 0.15 1</specular></material>
+        </visual>
+      </link>
+
+      <!-- Living room and dining room connect diagonally through this open central corner, with no wall or door between them. -->
+    </model>
+
+    <!-- Owner 2: living room person against the right wall; already lying in the fall direction. -->
+    <actor name="owner_living_room_falling_person">
+      <skin>
+        <filename>file://media/models/stand.dae</filename>
+        <scale>0.98</scale>
+      </skin>
+      <animation name="standing">
+        <filename>file://media/models/stand.dae</filename>
+        <scale>0.98</scale>
+        <interpolate_x>false</interpolate_x>
+      </animation>
+      <script>
+        <loop>false</loop>
+        <delay_start>0.0</delay_start>
+        <auto_start>true</auto_start>
+        <trajectory id="0" type="standing">
+          <waypoint>
+            <time>0.0</time>
+            <pose>8.58 4.55 0.20 1.5708 0.0000 -1.5708</pose>
+          </waypoint>
+          <waypoint>
+            <time>7.0</time>
+            <pose>8.58 4.55 0.20 1.5708 0.0000 -1.5708</pose>
+          </waypoint>
+        </trajectory>
+      </script>
+    </actor>
+
+    <!-- Owner 3: kitchen person in the rear wall corner; performs a larger talk/wave-like gesture and loops. -->
+    <actor name="owner_kitchen_waving_person">
+      <skin>
+        <filename>file://media/models/talk_b.dae</filename>
+        <scale>1.18</scale>
+      </skin>
+      <animation name="waving">
+        <filename>file://media/models/talk_b.dae</filename>
+        <scale>1.18</scale>
+        <interpolate_x>false</interpolate_x>
+      </animation>
+      <script>
+        <loop>true</loop>
+        <delay_start>1.5</delay_start>
+        <auto_start>true</auto_start>
+        <trajectory id="0" type="waving">
+          <waypoint>
+            <time>0.0</time>
+            <pose>5.45 5.95 0.00 0.0000 0.0000 0.0000</pose>
+          </waypoint>
+          <waypoint>
+            <time>8.0</time>
+            <pose>5.45 5.95 0.00 0.0000 0.0000 0.0000</pose>
+          </waypoint>
+        </trajectory>
+      </script>
+    </actor>
+
+    <gui fullscreen="0">
+      <camera name="user_camera">
+        <pose>4.5 -4.0 8.5 0 0.95 1.5708</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
+  </world>
+</sdf>

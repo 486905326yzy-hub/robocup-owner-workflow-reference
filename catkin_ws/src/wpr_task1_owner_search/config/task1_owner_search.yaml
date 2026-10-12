@@ -1,0 +1,171 @@
+waypoint_name: living_room
+waypoint_file: /home/ubuntu20/waypoints.xml
+owner_image_path: /home/ubuntu20/catkin_ws/src/wpr_task1_owner_search/data/owner/owner.jpg
+
+image_topic: /kinect2/qhd/image_color_rect
+detections_topic: /perception/person_detections_2d
+persons_3d_topic: /perception/person_detections_3d
+scan_topic: /scan
+odom_topic: /odom
+cmd_vel_topic: /cmd_vel
+say_topic: /voice/say
+pause_yolo_topic: /yoloworld/pause
+
+llm_url: http://127.0.0.1:11434/api/chat
+llm_unload_url: http://127.0.0.1:11434/api/generate
+llm_model: qwen3.5:9b
+llm_timeout: 90.0
+llm_keep_alive: 2m
+llm_max_tokens: 32
+# Qwen fallback is disabled by default. Owner verification uses InsightFace only.
+llm_num_gpu: 0
+llm_num_ctx: 1024
+llm_top_p: 0.7
+llm_prewarm: false
+llm_pause_yolo: false
+llm_unload_after_request: false
+llm_unload_wait: 0.0
+llm_image_max_side: 256
+llm_jpeg_quality: 68
+owner_accept_threshold: 0.68
+
+# Fast owner verification path. InsightFace runs on CPU by default so YOLO keeps cuda:0.
+face_verify_enabled: true
+face_auto_download: false
+face_model_name: buffalo_sc
+face_model_root: /home/ubuntu20/.insightface
+face_ctx_id: -1
+face_det_size: 320
+face_det_thresh: 0.45
+face_accept_threshold: 0.45
+face_reject_threshold: 0.25
+face_fast_reject: true
+face_qwen_fallback: false
+face_crop_top_ratio: 0.68
+
+detection_min_score: 0.30
+detection_min_area_ratio: 0.015
+candidate_cooldown: 1.0
+verify_top_k: 1
+verify_during_scan: true
+verify_after_scan_top_k: 1
+candidate_collection_interval: 0.5
+scan_candidate_pool_size: 6
+
+# After the owner is verified, stop in place and classify the owner's action with
+# a lightweight YOLO pose model. No large vision-language model fallback is used.
+action_recognition_enabled: true
+action_model_path: /home/ubuntu20/catkin_ws/src/wpr_task1_owner_search/models/pose/yolo11n-pose.pt
+action_device: cuda:0
+action_require_gpu: true
+action_imgsz: 384
+action_conf: 0.25
+action_iou: 0.45
+action_half: true
+action_sample_seconds: 3.0
+action_sample_rate: 5.0
+action_min_keypoint_conf: 0.20
+action_max_det: 4
+action_pause_yolo: false
+action_use_owner_roi: true
+action_roi_padding: 0.35
+action_min_pose_samples: 5
+action_static_required_ratio: 0.65
+action_report_standing: false
+# The four_rooms simulation launch overrides this to true. Keep the config
+# default false so the same task node remains usable on the real robot.
+action_sim_hint_enabled: false
+action_sim_hint_priority: true
+action_sim_hint_timeout: 0.8
+action_sim_hint_topic: /gazebo/model_states
+action_sim_robot_names: [wpb_home_mani, wpb_home, wpr1]
+action_sim_human_keywords: [person, human, kai, man, owner, guest]
+action_sim_front_bearing_limit: 0.75
+action_sim_max_distance: 8.0
+
+center_owner_before_action: true
+center_owner_timeout: 5.0
+center_owner_tolerance: 0.06
+center_owner_angular_gain: 0.75
+center_owner_max_angular_speed: 0.45
+center_owner_lost_turn_speed: 0.12
+
+navigate_timeout: 120.0
+scan_angular_speed: -0.35
+scan_duration: 10.0
+scan_total_angle: 3.1416
+scan_timeout: 30.0
+scan_after_arrival_delay: 0.0
+scan_return_to_owner: true
+return_angular_speed: 0.35
+
+approach_enabled: true
+approach_timeout: 18.0
+approach_linear_speed: 0.22
+approach_angular_gain: 0.9
+approach_stop_distance: 0.9
+approach_center_tolerance: 0.10
+approach_target_height_ratio: 0.52
+approach_use_3d: true
+approach_3d_wait_timeout: 5.0
+approach_3d_max_age: 1.0
+approach_goal_frame: map
+approach_base_frame: base_footprint
+# Raw Kinect/OpenNI point clouds use optical coordinates: x=image right, y=image down, z=forward depth.
+approach_3d_coordinate_mode: optical
+approach_optical_lateral_sign: -1.0
+approach_standoff_distance: 0.82
+approach_side_offset: 0.25
+approach_side_preference: nearest
+approach_min_person_distance: 0.35
+approach_max_person_distance: 6.0
+approach_min_goal_distance: 0.20
+approach_goal_timeout: 25.0
+approach_fallback_2d: false
+approach_pause_yolo: true
+approach_plan_check: true
+approach_plan_service: /move_base/make_plan
+approach_plan_tolerance: 0.25
+# One-shot navigation by default; lower this value to re-enable staged approach.
+approach_max_goal_distance: 6.0
+approach_3d_max_stages: 1
+approach_stage_timeout: 12.0
+approach_servo_fallback: true
+approach_servo_timeout: 10.0
+approach_servo_stop_distance: 0.92
+approach_servo_linear_speed: 0.16
+approach_servo_angular_gain: 0.75
+approach_final_align_enabled: true
+approach_final_align_timeout: 5.0
+approach_final_align_tolerance: 0.06
+approach_final_align_angular_gain: 0.9
+approach_final_align_max_speed: 0.28
+approach_fine_refine_enabled: true
+approach_fine_refine_timeout: 8.0
+approach_fine_distance_tolerance: 0.06
+approach_fine_bearing_tolerance: 0.05
+approach_fine_stable_cycles: 4
+approach_fine_linear_gain: 0.25
+approach_fine_angular_gain: 0.9
+approach_fine_max_linear_speed: 0.08
+approach_fine_max_reverse_speed: 0.05
+approach_fine_max_angular_speed: 0.22
+approach_fine_lidar_stop_distance: 0.55
+approach_fine_lidar_margin: 0.08
+
+arm_assist_enabled: false
+arm_assist_topic: /wpb_home/mani_ctrl
+arm_assist_lift_height: 1.0
+arm_assist_gripper: 0.16
+arm_assist_publish_seconds: 1.5
+arm_assist_hold_seconds: 3.0
+
+speak_on_start: true
+speak_on_arrival: false
+speak_on_owner_found: true
+say_wait_for_subscribers: true
+say_wait_timeout: 30.0
+say_repeat_count: 1
+say_repeat_interval: 0.25
+say_after_publish_delay: 1.0
+action_speech_hold: 3.2

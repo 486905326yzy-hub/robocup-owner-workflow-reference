@@ -1,0 +1,28 @@
+<launch>
+  <!-- Independent from task1_owner_search_real: it never starts base, lidar, map or navigation. -->
+  <arg name="start_kinect" default="true" />
+  <arg name="start_voice" default="true" />
+  <arg name="start_asr" default="true" />
+  <arg name="start_tts" default="true" />
+  <arg name="start_sound_play" default="true" />
+  <arg name="max_owners" default="3" />
+
+  <include if="$(arg start_kinect)" file="$(find wpb_task1_owner_search)/launch/kinect2_owner_search.launch">
+    <arg name="start_qhd_points" value="false" />
+  </include>
+  <group if="$(arg start_voice)">
+    <include file="$(find offline_voice_bridge)/launch/offline_voice_zh.launch">
+      <arg name="start_asr" value="false" />
+      <arg name="start_tts" value="$(arg start_tts)" />
+      <arg name="start_sound_play" value="$(arg start_sound_play)" />
+    </include>
+  </group>
+  <param name="/asr/capture_device" value="plughw:CARD=Sensor,DEV=0" />
+  <node if="$(arg start_asr)" pkg="wpb_task1_owner_search" type="offline_asr_py38.py"
+        name="offline_asr_node" output="screen" />
+
+  <node pkg="wpb_task1_owner_search" type="owner_enrollment_real_py39.py" name="owner_enrollment_real" output="screen">
+    <rosparam command="load" file="$(find wpb_task1_owner_search)/config/owner_enrollment_real.yaml" />
+    <param name="max_owners" value="$(arg max_owners)" />
+  </node>
+</launch>

@@ -1,0 +1,13 @@
+# Use a conservative footprint and safety buffer for the physical robot.
+robot_radius: 0.25
+inflation_radius: 0.50
+# Mark moving obstacles early so the global plan can reroute.
+obstacle_range: 3.0
+raytrace_range: 6.0
+observation_sources: base_lidar
+base_lidar: {
+    data_type: LaserScan,
+    topic: /scan, 
+    marking: true, 
+    clearing: true
+    }

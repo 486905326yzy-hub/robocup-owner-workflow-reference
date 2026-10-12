@@ -1,0 +1,11 @@
+<launch>
+  <node pkg="wpb_home_python3" type="image_to_llm_speak.py" name="image_to_llm_speak" output="screen">
+    <param name="llm_api_url" type="string" value="http://localhost:11434/api/chat"/>
+    <param name="llm_model" type="string" value="qwen3.5:9b"/>
+    <param name="prompt" type="string" value="请用中文简洁描述这张图片中的内容，不超过三句话。"/>
+    <param name="image_topic" type="string" value="/kinect2/hd/image_color_rect"/>
+    <param name="trigger_interval" type="double" value="15.0"/>
+    <param name="timeout" type="double" value="300.0"/>
+    <param name="max_predict" type="int" value="1000"/>
+  </node>
+</launch>

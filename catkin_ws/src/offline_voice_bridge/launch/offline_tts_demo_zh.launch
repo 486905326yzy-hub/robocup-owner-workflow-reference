@@ -1,0 +1,6 @@
+<launch>
+  <include file="$(find offline_voice_bridge)/launch/offline_tts_demo.launch">
+    <arg name="config" value="$(find offline_voice_bridge)/config/offline_voice_zh.yaml" />
+    <arg name="text" value="你好，这是离线中文语音播报测试。" />
+  </include>
+</launch>

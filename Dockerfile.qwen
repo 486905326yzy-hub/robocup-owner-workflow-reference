@@ -1,0 +1,31 @@
+FROM wpb-owner-search:pre-qwen
+
+USER root
+
+# Derive from the already-built robot runtime.  This keeps its CUDA/PyTorch
+# stack untouched and adds only Ollama plus the local switch-instruction model.
+ARG OLLAMA_MODEL=qwen3.5:0.8b
+ENV OLLAMA_MODELS=/opt/ollama/models
+
+COPY entrypoint.sh /entrypoint.sh
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl zstd \
+    && rm -rf /var/lib/apt/lists/* \
+    && chmod +x /entrypoint.sh \
+    && curl -fsSL https://ollama.com/install.sh -o /tmp/install-ollama.sh \
+    && sh /tmp/install-ollama.sh \
+    && command -v ollama \
+    && rm -f /tmp/install-ollama.sh \
+    && mkdir -p "${OLLAMA_MODELS}" \
+    && (ollama serve >/tmp/ollama-build.log 2>&1 & \
+        ollama_pid=$!; \
+        for attempt in $(seq 1 30); do \
+          if ollama list >/dev/null 2>&1; then break; fi; \
+          sleep 1; \
+        done; \
+        ollama list >/dev/null 2>&1; \
+        ollama pull "${OLLAMA_MODEL}"; \
+        kill "${ollama_pid}"; \
+        wait "${ollama_pid}" 2>/dev/null || true)
+
+USER ubuntu20

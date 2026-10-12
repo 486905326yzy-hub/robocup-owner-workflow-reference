@@ -1,0 +1,32 @@
+<launch>
+  <arg name="start_world" default="true" />
+  <arg name="start_rviz" default="true" />
+  <arg name="start_yolo" default="true" />
+  <arg name="start_voice" default="true" />
+  <arg name="show_yolo_viewer" default="true" />
+  <arg name="action_sim_hint_enabled" default="true" />
+  <arg name="arm_assist_enabled" default="true" />
+
+  <arg name="image_topic" default="/kinect2/qhd/image_color_rect" />
+  <arg name="owner_image_path" default="$(find wpr_task1_owner_search)/data/owner/owner.jpg" />
+  <arg name="waypoint_file" default="/home/$(env USER)/waypoints.xml" />
+  <arg name="device" default="cuda:0" />
+
+  <include file="$(find wpr_task1_owner_search)/launch/four_rooms_navigation.launch">
+    <arg name="start_world" value="$(arg start_world)" />
+    <arg name="start_rviz" value="$(arg start_rviz)" />
+    <arg name="waypoints" value="$(arg waypoint_file)" />
+  </include>
+
+  <include file="$(find wpr_task1_owner_search)/launch/task1_owner_search.launch">
+    <arg name="start_yolo" value="$(arg start_yolo)" />
+    <arg name="start_voice" value="$(arg start_voice)" />
+    <arg name="show_yolo_viewer" value="$(arg show_yolo_viewer)" />
+    <arg name="image_topic" value="$(arg image_topic)" />
+    <arg name="owner_image_path" value="$(arg owner_image_path)" />
+    <arg name="waypoint_file" value="$(arg waypoint_file)" />
+    <arg name="device" value="$(arg device)" />
+    <arg name="action_sim_hint_enabled" value="$(arg action_sim_hint_enabled)" />
+    <arg name="arm_assist_enabled" value="$(arg arm_assist_enabled)" />
+  </include>
+</launch>

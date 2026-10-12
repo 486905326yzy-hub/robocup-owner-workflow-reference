@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+models/*
+!models/.gitkeep
+data/owner1/*
+data/owner2/*
+data/owner3/*
+data/query/*
+!data/**/.gitkeep
+outputs/embeddings/*
+outputs/similarity_matrix/*
+outputs/visualization/*
+!outputs/**/.gitkeep

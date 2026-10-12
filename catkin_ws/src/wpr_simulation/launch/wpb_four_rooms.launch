@@ -1,0 +1,75 @@
+<launch>
+
+  <arg name="start_grab_behaviors" default="true" />
+
+  <!-- Four-room house world. The field origin is at the lower-left corner. -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find wpr_simulation)/worlds/four_rooms.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="recording" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+
+  <!-- Spawn furniture and kitchen fixtures. -->
+  <node name="bed" pkg="gazebo_ros" type="spawn_model" args="-file $(find wpr_simulation)/models/bed.model -x 0.80 -y 1.15 -z 0 -Y 1.5708 -urdf -model bed" />
+  <node name="bedroom_person_lying" pkg="gazebo_ros" type="spawn_model" args="-file $(find wpr_simulation)/models/kai_lying_bed.model -x 1.55 -y 3.25 -z 0.72 -Y 3.1416 -urdf -model bedroom_person_lying" />
+  <node name="dressing_table" pkg="gazebo_ros" type="spawn_model" args="-file $(find wpr_simulation)/models/dressing_table.model -x 0.40 -y 3.45 -z 0 -Y 0 -urdf -model dressing_table" />
+  <node name="study_desk" pkg="gazebo_ros" type="spawn_model" args="-file $(find wpr_simulation)/models/study_desk.model -x 3.55 -y 3.35 -z 0 -Y 0 -urdf -model study_desk" />
+  <node name="sofa" pkg="gazebo_ros" type="spawn_model" args="-file $(find wpr_simulation)/models/sofa.model -x 4.05 -y 2.00 -z 0 -Y 0 -urdf -model sofa" />
+  <node name="tea_table" pkg="gazebo_ros" type="spawn_model" args="-file $(find wpr_simulation)/models/tea_table.model -x 5.55 -y 3.10 -z 0 -Y 0 -urdf -model tea_table" />
+  <node name="square_stool_front" pkg="gazebo_ros" type="spawn_model" args="-file $(find wpr_simulation)/models/square_stool.model -x 5.55 -y 2.10 -z 0 -Y 0 -urdf -model square_stool_front" />
+  <node name="square_stool_back" pkg="gazebo_ros" type="spawn_model" args="-file $(find wpr_simulation)/models/square_stool.model -x 5.55 -y 4.10 -z 0 -Y 0 -urdf -model square_stool_back" />
+  <node name="square_stool_right" pkg="gazebo_ros" type="spawn_model" args="-file $(find wpr_simulation)/models/square_stool.model -x 6.35 -y 3.10 -z 0 -Y 0 -urdf -model square_stool_right" />
+  <node name="tv_cabinet" pkg="gazebo_ros" type="spawn_model" args="-file $(find wpr_simulation)/models/tv_cabinet.model -x 8.62 -y 3.10 -z 0 -Y 0 -urdf -model tv_cabinet" />
+  <node name="dining_table" pkg="gazebo_ros" type="spawn_model" args="-file $(find wpr_simulation)/models/table.model -x 2.20 -y 6.90 -z 0 -Y 1.5708 -urdf -model dining_table" />
+  <node name="dining_storage_box" pkg="gazebo_ros" type="spawn_model" args="-file $(find wpr_simulation)/models/storage_box.model -x 0.52 -y 6.85 -z 0 -Y 0 -urdf -model dining_storage_box" />
+  <node name="wine_rack" pkg="gazebo_ros" type="spawn_model" args="-file $(find wpr_simulation)/models/wine_rack.model -x 3.55 -y 4.85 -z 0 -Y 0 -urdf -model wine_rack" />
+  <node name="kitchen_sink" pkg="gazebo_ros" type="spawn_model" args="-file $(find wpr_simulation)/models/sink.model -x 6.65 -y 8.55 -z 0 -Y 0 -urdf -model kitchen_sink" />
+  <node name="kitchen_storage_box" pkg="gazebo_ros" type="spawn_model" args="-file $(find wpr_simulation)/models/storage_box.model -x 5.55 -y 7.20 -z 0 -Y 0 -urdf -model kitchen_storage_box" />
+  <node name="stove" pkg="gazebo_ros" type="spawn_model" args="-file $(find wpr_simulation)/models/stove.model -x 8.45 -y 7.20 -z 0 -Y 0 -urdf -model stove" />
+
+  <!-- Spawn the WPB_HOME manipulator robot outside the entrance, facing into the house. -->
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-file $(find wpr_simulation)/models/wpb_home_mani.model -urdf -x 6.75 -y 0.35 -z 0 -Y 1.5708 -model wpb_home_mani" />
+
+  <!-- TF is published by wpb_home_controllers.launch below.
+       Do not start a second robot_state_publisher here: both publishers
+       would broadcast the same mani_* frames and cause TF_REPEATED_DATA. -->
+  <arg name="model" default="$(find wpb_home_bringup)/urdf/wpb_home_mani.urdf"/>
+  <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
+
+  <!-- Load WPB_HOME manipulator and gripper controllers. -->
+  <include file="$(find wpr_simulation)/launch/wpb_home_controllers.launch"/>
+
+  <!-- Load object perception and grab action servers for the manipulator. -->
+  <node if="$(arg start_grab_behaviors)" pkg="wpb_home_behaviors" type="wpb_home_grab_server" name="wpb_home_grab_server">
+    <param name="start" type="bool" value="false"/>
+    <rosparam file="$(find wpb_home_bringup)/config/wpb_home.yaml" command="load" />
+  </node>
+  <node if="$(arg start_grab_behaviors)" pkg="wpb_home_behaviors" type="wpb_home_objects_3d" name="wpb_home_objects_3d" output="screen">
+    <param name="topic" type="string" value="/kinect2/sd/points"/>
+    <param name="start" type="bool" value="false"/>
+    <rosparam file="$(find wpb_home_bringup)/config/wpb_home.yaml" command="load" />
+  </node>
+  <node if="$(arg start_grab_behaviors)" pkg="wpb_home_behaviors" type="wpb_home_grab_action" name="wpb_home_grab_action">
+    <rosparam file="$(find wpb_home_bringup)/config/wpb_home.yaml" command="load" />
+  </node>
+
+  <!-- Optional filtered scan topic for SLAM/debugging workflows. -->
+  <node pkg="wpr_simulation" type="lidar_filter" name="lidar_filter" />
+
+  <!-- joy node -->
+  <!-- <node respawn="true" pkg="joy" type="joy_node" name="wpb_home_joy" >
+    <param name="dev" type="string" value="/dev/input/js0" />
+    <param name="deadzone" value="0.12" />
+  </node> -->
+
+  <!-- Axes Velcmd -->
+  <!-- <param name="axis_linear" value="1" type="int"/>
+  <param name="axis_angular" value="0" type="int"/>
+  <param name="scale_linear" value="1" type="double"/>
+  <param name="scale_angular" value="1" type="double"/>
+  <node pkg="wpb_home_bringup" type="wpb_home_js_vel" name="teleop"/> -->
+
+</launch>

@@ -1,0 +1,39 @@
+<launch>
+  <arg name="start_world" default="true" />
+  <arg name="start_rviz" default="true" />
+  <arg name="map" default="$(find wpr_simulation)/maps/map.yaml" />
+  <arg name="waypoints" default="/home/$(env USER)/waypoints.xml" />
+  <arg name="rvizconfig" default="$(find wpr_simulation)/rviz/nav.rviz" />
+
+  <group if="$(arg start_world)">
+    <include file="$(find wpr_simulation)/launch/wpb_four_rooms.launch">
+      <arg name="start_grab_behaviors" value="false" />
+    </include>
+  </group>
+
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map)" />
+
+  <include file="$(find wpb_home_tutorials)/nav_lidar/amcl_omni.launch" />
+
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <rosparam file="$(find wpb_home_tutorials)/nav_lidar/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find wpb_home_tutorials)/nav_lidar/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find wpb_home_tutorials)/nav_lidar/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find wpb_home_tutorials)/nav_lidar/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find wpb_home_tutorials)/nav_lidar/local_planner_params.yaml" command="load" />
+    <rosparam param="WpbhLocalPlanner/max_vel_trans">0.45</rosparam>
+    <rosparam param="WpbhLocalPlanner/max_vel_rot">1.2</rosparam>
+    <rosparam param="WpbhLocalPlanner/acc_scale_trans">2.0</rosparam>
+    <rosparam param="WpbhLocalPlanner/acc_scale_rot">0.8</rosparam>
+    <param name="base_global_planner" value="global_planner/GlobalPlanner" />
+    <param name="use_dijkstra" value="true" />
+    <param name="base_local_planner" value="wpbh_local_planner/WpbhLocalPlanner" />
+    <param name="controller_frequency" value="10" type="double" />
+  </node>
+
+  <node pkg="waterplus_map_tools" type="wp_manager" name="wp_manager" output="screen">
+    <param name="load" type="string" value="$(arg waypoints)" />
+  </node>
+
+  <node if="$(arg start_rviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" />
+</launch>

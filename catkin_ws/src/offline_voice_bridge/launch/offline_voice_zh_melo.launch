@@ -1,0 +1,20 @@
+<launch>
+  <arg name="config" default="$(find offline_voice_bridge)/config/offline_voice_zh_melo.yaml" />
+  <arg name="start_asr" default="true" />
+  <arg name="start_tts" default="true" />
+  <arg name="start_sound_play" default="true" />
+
+  <rosparam command="load" file="$(arg config)" subst_value="true" />
+
+  <group if="$(arg start_sound_play)">
+    <node name="soundplay_node" pkg="sound_play" type="soundplay_node.py" output="screen" />
+  </group>
+
+  <group if="$(arg start_tts)">
+    <node name="natural_tts_node" pkg="offline_voice_bridge" type="natural_tts_node.py" output="screen" />
+  </group>
+
+  <group if="$(arg start_asr)">
+    <node name="offline_asr_node" pkg="offline_voice_bridge" type="offline_asr_node.py" output="screen" />
+  </group>
+</launch>

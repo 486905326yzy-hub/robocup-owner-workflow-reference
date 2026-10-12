@@ -1,0 +1,21 @@
+<launch>
+  <arg name="image_topic" default="/kinect2/qhd/image_color_rect" />
+  <arg name="model_path" default="$(find yoloworld_perception)/models/yolov8s-world-person.pt" />
+  <arg name="device" default="cuda:0" />
+  <arg name="conf" default="0.25" />
+  <arg name="imgsz" default="640" />
+
+  <node pkg="yoloworld_perception" type="yoloworld_node.py" name="yoloworld" output="screen">
+    <param name="image_topic" value="$(arg image_topic)" />
+    <param name="model_path" value="$(arg model_path)" />
+    <param name="device" value="$(arg device)" />
+    <param name="require_gpu" value="true" />
+    <param name="imgsz" value="$(arg imgsz)" />
+    <param name="conf" value="$(arg conf)" />
+    <param name="iou" value="0.45" />
+    <param name="max_det" value="20" />
+    <param name="classes" value="person" />
+    <remap from="~detections" to="/perception/person_detections_2d" />
+    <remap from="~debug_image" to="/perception/yoloworld/debug_image" />
+  </node>
+</launch>

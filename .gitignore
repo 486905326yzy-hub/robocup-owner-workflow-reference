@@ -1,0 +1,34 @@
+# Catkin build products (recreated from source)
+/catkin_ws/build/
+/catkin_ws/devel/
+/catkin_ws/install/
+/catkin_ws/.catkin_workspace
+
+# Downloaded/runtime caches (recreated from the documented dependencies)
+/home_cache/
+
+# ROS logs and recordings
+/.ros/log/
+*.bag
+*.log
+
+# Python and editor temporary files
+**/__pycache__/
+*.py[cod]
+*.tmp
+*.swp
+.DS_Store
+
+# Local Codex metadata
+/.agents/
+/.codex/
+
+# Local runtime artifacts: restore through documented model sources, never commit them
+/catkin_ws/src/wpb_task1_owner_search/models/
+/catkin_ws/src/wpb_task1_owner_search/third_party/
+/catkin_ws/src/wpb_task1_owner_search/data/owner/*.png
+/catkin_ws/src/wpb_task1_owner_search/data/reid_owner_voice/
+/catkin_ws/weights/
+/catkin_ws/*.pt
+/person_reid_test/data/
+/person_reid_test/outputs/
